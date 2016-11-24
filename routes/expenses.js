@@ -47,7 +47,6 @@ router.post('/deleteExpense',function(req,res){
         }
       });
 })
-
 router.post('/updateExpense',function(req,res){
       var id = req.body.id;
       var title = req.body.title,
