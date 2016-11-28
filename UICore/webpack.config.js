@@ -15,7 +15,9 @@ module.exports={
           plugins : ["transform-class-properties"],
           cacheDirectory: true
         }
-      }
+
+      },
+       { test: /\.css$/, loader: "style-loader!css-loader" }
     ]
   }
 }
