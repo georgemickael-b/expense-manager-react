@@ -24,6 +24,7 @@ class AddCategory extends React.Component{
   render(){
     return(
       <div>
+        <label>Name</label>
         <TextInput
           onDOMChange = {(e)=>this.setState({name:e.target.value})}
         /><br /> <br/>

@@ -27,9 +27,10 @@ class AddExpense extends React.Component{
      }
     console.log({title,amount,notes,date,categoriesID})
     var self=this
-    axios.post("/expenses/addExpense",{title,amount,notes,date,categoriesID})
+    axios.post("/expenses/addExpense",{title,amount,notes,date:date.toLocaleDateString(),categoriesID})
     .then(function(response){
       console.log(response)
+      self.props.refreshExpensesData()
     })
     .catch(function(response){
       console.log(response)
@@ -53,27 +54,43 @@ class AddExpense extends React.Component{
   render(){
     return(
       <Box>
-        <label>Date</label>
-        <DateTime
-          value={this.state.date}
-          onChange={(date) => this.setState({date: new Date(date)})}
-          format ="YYYY/M/D"
-        />
-        <label>Title</label>
-        <TextInput
-          onDOMChange = {(e)=>this.setState({title:e.target.value})}
-        />
-        <label>Amount</label>
-        <TextInput
-          onDOMChange = {(e)=>this.setState({amount:e.target.value})}
-        />
-        <label>Notes</label>
-        <TextInput
-          onDOMChange = {(e)=>this.setState({notes:e.target.value})}
-        />
-        <label>Categories</label>
-        <Select inline={true} multiple={true} value={this.state.categories}
-        onChange={this.addCategory} options={this.formatCategories()} />
+        <table>
+        <tbody>
+        <tr>
+          <td><label>Date</label></td>
+          <td><DateTime
+            value={this.state.date}
+            onChange={(date) => this.setState({date: new Date(date)})}
+            format ="YYYY/M/D"
+          /></td>
+        </tr>
+        <tr>
+          <td><label>Title</label></td>
+          <td><TextInput
+            onDOMChange = {(e)=>this.setState({title:e.target.value})}
+          /></td>
+        </tr>
+        <tr>
+          <td><label>Amount</label></td>
+          <td><TextInput
+            onDOMChange = {(e)=>this.setState({amount:e.target.value})}
+          /></td>
+        </tr>
+        <tr>
+          <td><label>Notes</label></td>
+          <td><TextInput
+            onDOMChange = {(e)=>this.setState({notes:e.target.value})}
+          /></td>
+        </tr>
+        <tr>
+          <td><label>Categories</label></td>
+          <td>
+          <Select inline={true} multiple={true} value={this.state.categories}
+          onChange={this.addCategory} options={this.formatCategories()} />
+          </td>
+        </tr>
+        </tbody>
+        </table>
 
         <Button type="button" onClick={this.sendExpenseDetails} label="Add" primary={true}  />
         </Box>

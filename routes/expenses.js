@@ -3,10 +3,14 @@ var router = express.Router();
 var mongoose = require('mongoose');
 var ExpensesModel = require('../model/expenses')
 
-router.get('/',function(req, res) {
-        ExpensesModel.find({}, function (err, expenses) {
+router.post('/',function(req, res) {
+        var startDate = new Date(req.body.startDate),
+            endDate = new Date(req.body.endDate)
+
+        ExpensesModel.find({ date: { $gte: startDate, $lte: endDate }}, function (err, expenses) {
               if (err) {
                   res.status(400)
+                  console.log(err)
                   res.send(err)
               }
               else {
@@ -19,7 +23,7 @@ router.post('/addExpense',function(req,res){
           amount = req.body.amount,
           notes = req.body.notes,
           categoriesID = req.body.categoriesID,
-          date = req.body.date;
+          date = new Date(req.body.date);
       var values = {title : title , amount :amount , categoriesID : categoriesID}
       if(notes)
         values["notes"] = notes
@@ -53,7 +57,8 @@ router.post('/updateExpense',function(req,res){
           amount = req.body.amount,
           notes = req.body.notes,
           categoriesID = req.body.categoriesID,
-          date = req.body.date;
+          date = new Date(req.body.date);
+
       var values={}
       if(notes)
         values["notes"] = notes
