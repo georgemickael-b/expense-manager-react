@@ -30,9 +30,11 @@ class AddExpense extends React.Component{
     axios.post("/expenses/addExpense",{title,amount,notes,date:date.toLocaleDateString(),categoriesID})
     .then(function(response){
       console.log(response)
+      alert("Added");
       self.props.refreshExpensesData()
     })
     .catch(function(response){
+      alert("Something went wrong")
       console.log(response)
     })
   }
@@ -54,6 +56,7 @@ class AddExpense extends React.Component{
   render(){
     return(
       <Box>
+        <h3>Add Expense</h3>
         <table>
         <tbody>
         <tr>

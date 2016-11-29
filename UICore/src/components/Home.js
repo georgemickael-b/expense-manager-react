@@ -3,6 +3,7 @@ import Tabs from 'grommet/components/Tabs';
 import Tab from 'grommet/components/Tab';
 import Expenses from './Expenses'
 import Categories from './Categories'
+import Box from 'grommet/components/Box';
 import View from './View'
 import axios from 'axios'
 
@@ -46,7 +47,9 @@ class Home extends React.Component{
                setActiveTab={this.setActiveTab}/>
           </Tab>
           <Tab title="View">
-              <View setActiveTab={this.setActiveTab} />
+              <View setActiveTab={this.setActiveTab}
+                categories={this.state.categories}
+                 />
           </Tab>
         </Tabs>
       </div>

@@ -15,14 +15,14 @@ class Expenses extends React.Component{
       option : "add",
       expensesData : [],
       startDate : startDate,
-      endDate : new Date()
+      endDate : endDate
     }
   }
   componentWillMount(){
     this.props.setActiveTab(0)
     this.loadExpenseData()
   }
-  loadExpenseData = (startDate,endDate) =>{
+  loadExpenseData = () =>{
     var {startDate,endDate} = this.state
     var self=this
     axios.post('/expenses',{startDate:startDate.toLocaleDateString(),

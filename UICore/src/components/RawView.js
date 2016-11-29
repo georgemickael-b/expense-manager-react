@@ -3,27 +3,39 @@ import Button from 'grommet/components/Button';
 import DateTime from 'grommet/components/DateTime';
 import axios from 'axios'
 
-class DeleteExpense  extends React.Component{
+class RawView  extends React.Component{
   constructor(props){
     super(props)
+    var endDate = new Date()
+    var startDate = new Date();
+    startDate.setDate(endDate.getDate()-10);
+    this.state = {
+      expensesData:[],
+      endDate : endDate,
+      startDate : startDate
+    }
   }
-
-  sendDeleteExpenseDetails(expenseId){
+  componentWillMount(){
+    this.loadExpenseData()
+  }
+  loadExpenseData = () =>{
+    var {startDate,endDate} = this.state
     var self=this
-    axios.post("/expenses/deleteExpense",{id:expenseId})
+    axios.post('/expenses',{startDate:startDate.toLocaleDateString(),
+                            endDate :endDate.toLocaleDateString()})
     .then(function(response){
-      console.log(response)
-      self.props.refreshExpensesData()
+      console.log(response.data)
+      self.setState({expensesData : response.data})
     })
-    .catch(function(response){
-      console.log(response)
+    .catch(function(err){
+      console.log(err)
     })
   }
 
-  getDataTableForDelete = ()=>{
-    if(!this.props.expensesData)
+  getDataTable = ()=>{
+    if(!this.state.expensesData)
         return <div>Loading...</div>
-    var expensesData=this.props.expensesData
+    var expensesData=this.state.expensesData
     var categories=this.props.categories
     return(
     <div>
@@ -49,10 +61,6 @@ class DeleteExpense  extends React.Component{
                   <td>{d.categoriesID.map((id) =>{
                       return (<span key={id}> {_.find(categories,{_id:id}).name} </span>)
                     })}</td>
-                  <td>
-                    <Button label="Delete" secondary={true}
-                    onClick = {this.sendDeleteExpenseDetails.bind(this,d._id)} />
-                  </td>
                 </tr>
               )
             })
@@ -66,31 +74,32 @@ class DeleteExpense  extends React.Component{
   render(){
     return(
       <div>
-      <h3>Delete Category</h3><br/>
+      <h3> Raw Expense Data</h3>
       From : <DateTime
-        value={this.props.startDate}
+        value={this.state.startDate}
         onChange={(date) => {
-                    this.props.setStartDate(new Date(date))
+                    this.setState({startDate : new Date(date)})
+                    this.loadExpenseData()
                     }
                   }
         format ="M/D/YYYY"
       />
-
       To : <DateTime
-        value={this.props.endDate}
+        value={this.state.endDate}
         onChange={(date) => {
-                    this.props.setEndDate(new Date(date))
+                    this.setState({endDate : new Date(date)})
+                    this.loadExpenseData()
                   }
                 }
         format ="M/D/YYYY"
       />
       <Button label="Refresh" accent={true}
-      onClick = {this.props.refreshExpensesData} />
+      onClick = {this.loadExpenseData} />
 
-        {this.getDataTableForDelete()}
+        {this.getDataTable()}
       </div>
     )
   }
 }
 
-export default DeleteExpense
+export default RawView

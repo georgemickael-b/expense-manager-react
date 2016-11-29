@@ -6,7 +6,6 @@ var ExpensesModel = require('../model/expenses')
 router.post('/',function(req, res) {
         var startDate = new Date(req.body.startDate),
             endDate = new Date(req.body.endDate)
-
         ExpensesModel.find({ date: { $gte: startDate, $lte: endDate }}, function (err, expenses) {
               if (err) {
                   res.status(400)
@@ -18,6 +17,64 @@ router.post('/',function(req, res) {
               }
             });
           })
+router.post('/daily',function(req,res){
+    var startDate = new Date(req.body.startDate),
+        endDate = new Date(req.body.endDate)
+    ExpensesModel.aggregate([
+        {$match: { date : { $gte: startDate,$lte:endDate } } },
+        {$unwind: "$categoriesID" },
+        {$group: { _id: {categoryID:"$categoriesID" , date : "$date" } , total: { $sum: "$amount" } }}
+      ],function(err,expenses){
+        if (err) {
+            res.status(400)
+            console.log(err)
+            res.send(err)
+        }
+        else {
+            res.send(expenses)
+        }
+      })
+    })
+router.post('/monthly',function(req,res){
+    var year= req.body.year
+    ExpensesModel.aggregate([
+        {$project:{year :{ $year: "$date" },categoriesID:"$categoriesID",amount:"$amount",date:"$date"}},
+        {$match: { year : year } },
+        {$unwind: "$categoriesID" },
+        {$group: { _id: {categoryID:"$categoriesID" , month : { $month : "$date"} } ,
+          total: { $sum: "$amount" } }}
+      ],function(err,expenses){
+        if (err) {
+            res.status(400)
+            console.log(err)
+            res.send(err)
+        }
+        else {
+            res.send(expenses)
+        }
+      })
+    })
+router.post('/weekly',function(req,res){
+    var month= req.body.month
+    var year= req.body.year
+    ExpensesModel.aggregate([
+        {$project:{month :{ $month: "$date" },year:{$year :"$date"},categoriesID:"$categoriesID",
+              amount:"$amount",date:"$date"}},
+        {$match: { month : month ,year :year} },
+        {$unwind: "$categoriesID" },
+        {$group: { _id: {categoryID:"$categoriesID" , week : { $week : "$date"} } ,
+          total: { $sum: "$amount" } }}
+      ],function(err,expenses){
+        if (err) {
+            res.status(400)
+            console.log(err)
+            res.send(err)
+        }
+        else {
+            res.send(expenses)
+        }
+      })
+    })
 router.post('/addExpense',function(req,res){
       var title = req.body.title,
           amount = req.body.amount,

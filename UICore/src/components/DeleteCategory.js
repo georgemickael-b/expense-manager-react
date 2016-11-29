@@ -15,9 +15,11 @@ sendDeleteCategoryDetails=(categoryId)=>{
     axios.post("/categories/deleteCategory",{id:categoryId})
     .then(function(response){
       console.log(response)
+      alert("Deleted")
       self.props.refreshCategories()
     })
     .catch(function(response){
+      alert("Something went wrong")
       console.log(response)
     })
   }
@@ -25,6 +27,7 @@ sendDeleteCategoryDetails=(categoryId)=>{
   render(){
     return(
       <div>
+        <h3>Delete Category</h3><br/>
         <List>
           {this.props.categories.map((category,idx)=>{
             return(
